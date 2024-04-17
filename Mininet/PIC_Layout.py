@@ -27,9 +27,9 @@ def myNetwork():
     info( '*** Add switches/APs\n')
     ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, listenPort=6633, ssid='ap1-ssid',
                              channel='1', mode='g', ip='10.0.1.0', position='204.0,188.0,0')
-    ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6633, dpid='DPID_A2', ssid='ap2-ssid',
+    ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6633, ssid='ap2-ssid',
                              channel='1', mode='g', ip='10.0.2.0', position='671.0,174.0,0')
-    s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633, dpid='DPID_S1')
+    s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633)
 
     info( '*** Add hosts/stations\n')
     sta1 = net.addStation('sta1', ip='10.0.0.1',
