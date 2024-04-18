@@ -9,8 +9,13 @@ from mn_wifi.link import wmediumd
 from mn_wifi.wmediumdConnector import interference
 from subprocess import call
 
+import sys
+import os
+from mn_wifi.replaying import ReplayingMobility
 
-def myNetwork():
+
+
+def myNetwork(args):
 
     net = Mininet_wifi(topo=None,
                        build=False,
@@ -18,22 +23,17 @@ def myNetwork():
                        wmediumd_mode=interference,
                        ipBase='10.0.0.0/8')
 
-    info( '*** Adding controller\n' )
-    c0 = net.addController(name='c0',
+    info( '*** Adding Nodes\n' )
+    c1 = net.addController(name='c1',
                            controller=Controller,
                            protocol='tcp',
                            port=6633)
-
-    info( '*** Add switches/APs\n')
     ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, listenPort=6633, ssid='ap1-ssid',
-                             channel='1', mode='g', ip='10.0.1.0', position='204.0,188.0,0')
+                             channel='1', mode='g', ip='10.0.1.0', position='23.0,23.0,0', range='23')
     ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6633, ssid='ap2-ssid',
-                             channel='1', mode='g', ip='10.0.2.0', position='671.0,174.0,0')
+                             channel='1', mode='g', ip='10.0.2.0', position='46.0,23.0,0', range='23')
     s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633)
-
-    info( '*** Add hosts/stations\n')
-    sta1 = net.addStation('sta1', ip='10.0.0.1',
-                           position='200.0,27.0,0')
+    sta1 = net.addStation('sta1', ip='10.0.0.1', speed=3, position='23.0,33.0,0', range='23')
     h1 = net.addHost('h1', cls=Host, ip='10.0.0.2', defaultRoute=None)
     h2 = net.addHost('h2', cls=Host, ip='10.0.0.3', defaultRoute=None)
 
@@ -46,32 +46,53 @@ def myNetwork():
     info( '*** Add links\n')
     net.addLink(s1, h1)
     net.addLink(s1, h2)
+    net.addLink(s1, ap1)
     net.addLink(s1, ap2)
-    net.addLink(ap1, s1)
-
-    net.plotGraph(max_x=1000, max_y=1000)
-
+    
+    info( '*** Mobility\n')
+    net.isReplaying = True
+    path = os.path.dirname(os.path.abspath(__file__)) + '/replayingMobility/'
+    get_trace(sta1, '{}pic.dat'.format(path))
+    if '-p' not in args:
+        net.plotGraph(max_x=69, max_y=56)
+    
     info( '*** Starting network\n')
     net.build()
-    info( '*** Starting controllers\n')
-    for controller in net.controllers:
-        controller.start()
-
-    info( '*** Starting switches/APs\n')
-    net.get('ap1').start([])
-    net.get('ap2').start([])
-    net.get('s1').start([c0])
-
-    info( '*** Post configure nodes\n')
+    c1.start()
+    ap1.start([c1])
+    ap2.start([c1])
+    s1.start([c1])
+        
+    info("*** Replaying Bandwidth\n")
+    ReplayingMobility(net)
+    
+    info( '*** Commands\n')
     ap1.cmd('ifconfig ap1 10.0.1.0')
     ap2.cmd('ifconfig ap2 10.0.2.0')
     s1.cmd('ifconfig s1 10.1.0.0')
 
     CLI(net)
+    info("*** Stopping network\n")
     net.stop()
 
 
-if __name__ == '__main__':
-    setLogLevel( 'info' )
-    myNetwork()
+def get_trace(sta, file_):
+    file_ = open(file_, 'r')
+    raw_data = file_.readlines()
+    file_.close()
 
+    sta.p = []
+    pos = (-1000, 0, 0)
+    sta.position = pos
+
+    for data in raw_data:
+        line = data.split()
+        x = line[0]  # First Column
+        y = line[1]  # Second Column
+        pos = float(x), float(y), 0.0
+        sta.p.append(pos)
+
+
+if __name__ == '__main__':
+    setLogLevel('info')
+    myNetwork(sys.argv)
