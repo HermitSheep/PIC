@@ -11,9 +11,11 @@ from subprocess import call
 
 import sys
 import os
+import time
 from mn_wifi.replaying import ReplayingMobility
 
 
+time.sleep(10)
 
 def myNetwork(args):
 
@@ -33,7 +35,7 @@ def myNetwork(args):
     ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6633, ssid='ap2-ssid',
                              channel='1', mode='g', ip='10.0.2.0', position='46.0,23.0,0', range='23')
     s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633)
-    sta1 = net.addStation('sta1', ip='10.0.0.1', speed=3, position='23.0,33.0,0', range='23')
+    sta1 = net.addStation('sta1', ip='10.0.0.1', speed=1, position='23.0,33.0,0', range='23')
     h1 = net.addHost('h1', cls=Host, ip='10.0.0.2', defaultRoute=None)
     h2 = net.addHost('h2', cls=Host, ip='10.0.0.3', defaultRoute=None)
 
@@ -70,6 +72,7 @@ def myNetwork(args):
     ap1.cmd('ifconfig ap1 10.0.1.0')
     ap2.cmd('ifconfig ap2 10.0.2.0')
     s1.cmd('ifconfig s1 10.1.0.0')
+    
 
     CLI(net)
     info("*** Stopping network\n")
