@@ -15,9 +15,8 @@ import time
 from mn_wifi.replaying import ReplayingMobility
 
 
-time.sleep(10)
-
 def myNetwork(args):
+
 
     net = Mininet_wifi(topo=None,
                        build=False,
@@ -72,6 +71,8 @@ def myNetwork(args):
     ap1.cmd('ifconfig ap1 10.0.1.0')
     ap2.cmd('ifconfig ap2 10.0.2.0')
     s1.cmd('ifconfig s1 10.1.0.0')
+    s1.cmd('ovs-ofctl add-flow s1 action=normal')
+    net.pingAll()
     
 
     CLI(net)
