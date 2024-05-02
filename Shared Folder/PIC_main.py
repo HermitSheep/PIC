@@ -17,7 +17,7 @@ def run_script(script_path):
 run_script('PIC_Layout.py')
 
 # Start two tcpdump instances after a delay
-time.sleep(3)  # Wait for the script to start
+time.sleep(10)  # Wait for the script to start
 print('tcpdump -D:')
 subprocess.Popen(['tcpdump', '-D'])
 run_tcpdump('s1-eth1', 'output1.pcap')

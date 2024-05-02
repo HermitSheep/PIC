@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-from mininet.net import Mininet
-from mininet.node import Controller, RemoteController, OVSKernelSwitch, Host
+from mininet.node import Controller, OVSKernelSwitch, Host
 from mininet.log import setLogLevel, info
 from mn_wifi.net import Mininet_wifi
 from mn_wifi.node import Station, OVSKernelAP
@@ -19,17 +18,22 @@ from mn_wifi.replaying import ReplayingMobility
 def myNetwork(args):
 
 
-    net = Mininet_wifi(topo=None, build=False, link=wmediumd, wmediumd_mode=interference, ipBase='10.0.0.0/8')
+    net = Mininet_wifi(topo=None,
+                       build=False,
+                       link=wmediumd,
+                       wmediumd_mode=interference,
+                       ipBase='10.0.0.0/8')
 
     info( '*** Adding Nodes\n' )
-    c2 = RemoteController('c2', ip='172.17.0.2', port=6653)
-    ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, listenPort=6653, ssid='ap1-ssid', channel='1', mode='g', ip='10.0.1.0', position='23.0,23.0,0', range='23')
-    ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6653, ssid='ap2-ssid', channel='1', mode='g', ip='10.0.2.0', position='46.0,23.0,0', range='23')
-    s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6653)
-    #c1 = net.addController(name='c1', controller=Controller, protocol='tcp', port=6633)
-    #ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, listenPort=6633, ssid='ap1-ssid', channel='1', mode='g', ip='10.0.1.0', position='23.0,23.0,0', range='23')
-    #ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6633, ssid='ap2-ssid', channel='1', mode='g', ip='10.0.2.0', position='46.0,23.0,0', range='23')
-    #s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633)
+    c1 = net.addController(name='c1',
+                           controller=Controller,
+                           protocol='tcp',
+                           port=6633)
+    ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, listenPort=6633, ssid='ap1-ssid',
+                             channel='1', mode='g', ip='10.0.1.0', position='23.0,23.0,0', range='23')
+    ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, listenPort=6633, ssid='ap2-ssid',
+                             channel='1', mode='g', ip='10.0.2.0', position='46.0,23.0,0', range='23')
+    s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633)
     sta1 = net.addStation('sta1', ip='10.0.0.1', speed=1, position='23.0,33.0,0', range='23')
     h1 = net.addHost('h1', cls=Host, ip='10.0.0.2', defaultRoute=None)
     h2 = net.addHost('h2', cls=Host, ip='10.0.0.3', defaultRoute=None)
@@ -55,13 +59,10 @@ def myNetwork(args):
     
     info( '*** Starting network\n')
     net.build()
-    ap1.start([c2])
-    ap2.start([c2])
-    s1.start([c2])
-    #c1.start()
-    #ap1.start([c1])
-    #ap2.start([c1])
-    #s1.start([c1])
+    c1.start()
+    ap1.start([c1])
+    ap2.start([c1])
+    s1.start([c1])
         
     info("*** Replaying Bandwidth\n")
     ReplayingMobility(net)
