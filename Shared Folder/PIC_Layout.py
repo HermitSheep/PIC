@@ -25,12 +25,12 @@ def myNetwork(args):
 
     info( '*** Adding Nodes\n' )
     c1 = net.addController(name='c1', controller=RemoteController, ip='172.17.0.2', protocol='tcp', port=6653)
-    ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, protocols=["OpenFlow10"], ssid='ap1-ssid', channel='1', mode='g', ip='10.0.1.0', position='23.0,23.0,0', range='23')
-    ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, protocols=["OpenFlow10"], ssid='ap2-ssid', channel='1', mode='g', ip='10.0.2.0', position='46.0,23.0,0', range='23')
-    s1 = net.addSwitch('s1', cls=OVSKernelSwitch, protocols=["OpenFlow10"])
-    sta1 = net.addStation('sta1', ip='10.0.0.1', speed=1, position='23.0,33.0,0', range='23')
-    h1 = net.addHost('h1', cls=Host, ip='10.0.0.2', defaultRoute=None)
-    h2 = net.addHost('h2', cls=Host, ip='10.0.0.3', defaultRoute=None)
+    sta1 = net.addStation('sta1', ip='10.0.0.1', mac='00:00:00:00:00:01', speed=1, position='23.0,33.0,0', range='23')
+    h1 = net.addHost('h1', cls=Host, ip='10.0.0.2', mac='00:00:00:00:00:02', defaultRoute=None)
+    h2 = net.addHost('h2', cls=Host, ip='10.0.0.3', mac='00:00:00:00:00:03', defaultRoute=None)
+    s1 = net.addSwitch('s1', cls=OVSKernelSwitch, protocols=["OpenFlow10"], ip='10.0.1.1', mac='00:00:00:00:00:11')
+    ap1 = net.addAccessPoint('ap1', cls=OVSKernelAP, protocols=["OpenFlow10"], ssid='ap1-ssid', channel='1', mode='g', ip='10.0.1.2', mac='00:00:00:00:00:12', position='23.0,23.0,0', range='23')
+    ap2 = net.addAccessPoint('ap2', cls=OVSKernelAP, protocols=["OpenFlow10"], ssid='ap2-ssid', channel='1', mode='g', ip='10.0.1.3', mac='00:00:00:00:00:13', position='65.0,23.0,0', range='23')
 
     info("*** Configuring Propagation Model\n")
     net.setPropagationModel(model="logDistance", exp=3)
@@ -39,17 +39,18 @@ def myNetwork(args):
     net.configureWifiNodes()
 
     info( '*** Add links\n')
-    net.addLink(s1, h1)
-    net.addLink(s1, h2)
-    net.addLink(s1, ap1)
-    net.addLink(s1, ap2)
+    #(node1, node2, node1 port, node2 port)
+    net.addLink(s1, h1, port1=1, port2=1)
+    net.addLink(s1, h2, port1=2, port2=1)
+    net.addLink(s1, ap1, port1=3, port2=1)
+    net.addLink(s1, ap2, port1=4, port2=1)
     
     info( '*** Mobility\n')
     net.isReplaying = True
     path = os.path.dirname(os.path.abspath(__file__)) + '/replayingMobility/'
     get_trace(sta1, '{}pic.dat'.format(path))
-    if '-p' not in args:
-        net.plotGraph(max_x=69, max_y=56)
+    #if '-p' not in args:
+        #net.plotGraph(max_x=88, max_y=56)
     
     info( '*** Starting network\n')
     net.build()
@@ -66,11 +67,12 @@ def myNetwork(args):
     ap1.cmd('ifconfig ap1 10.0.1.0')
     ap2.cmd('ifconfig ap2 10.0.2.0')
     s1.cmd('ifconfig s1 10.1.0.0')
-    s1.cmd('ovs-ofctl add-flow s1 action=normal')
+    #s1.cmd('ovs-ofctl add-flow s1 action=normal')
     net.pingAll()
+    h1.cmd('ping -c 171 -i 1 10.0.0.1')
     
 
-    CLI(net)
+    #CLI(net)
     info("*** Stopping network\n")
     net.stop()
 
