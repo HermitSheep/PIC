@@ -1,0 +1,38 @@
+(acrónimos)
+1. Introdução
+	.Overview da temática
+	-Motivação e Objetivos
+	-Contribuições
+	-Estrutura
+2. Conceitos e Tecnologias
+	-Redes de comunicações
+		.Redes moveis e mobilidade
+	-Redes programaveis
+		.OpenVSwitch
+		.Mininet(-wifi)
+		.Protocolo openflow
+		.Controladores (ONOS - outros)
+	-Sumário (resumo e ponte para o próximo capitulo)
+3. Trabalho Desenvolvido
+	-Setup (toda a tecnologia usada)
+	-Topologia da rede
+	-Descrição das experiencias
+	-Reactive Forwarding
+		.Funcionamento Controlador
+		.Tabelas de fluxos
+		.Wireshark (separar plano de controlo de plano de dados)
+		.Estatisticas
+	-Proactive Forwarding
+		.Funcionamento Controlador
+		.Tabelas de fluxos
+		.Wireshark (separar plano de controlo de plano de dados)
+		.Estatisticas
+	-Sumário
+4. Conclusões
+
+Bibliografia (com livros e artigos)
+
+
+-> Todas as figuras têm de ser referidas em texto
+-> fazer em latex - overleaf
+25/30 páginas escritas a partir da introdução

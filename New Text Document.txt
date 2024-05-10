@@ -1,0 +1,17 @@
+Introduction
+
+overview - SDN - what it is - where it is used - it's advantages - mobile networks - (no AI)
+motivação e objetivos - curiosity - prove it's advantages
+contributions - Miguel Luis - Mateus Correia
+estrutura - general structure of the thesis
+
+
+Concepts and tecnologies
+- Networks - Mobile networks - high mobility of it's user's - wifi - example scenarios - mobility prediction
+
+- SDN
+	- openflow
+	- OpenVSwitch
+	- Controller
+	- mininet (-wifi)
+- 
